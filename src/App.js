@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState , useEffect} from 'react'
+import socketIOClient from 'socket.io-client'
+import {LineChart,XAxis,Tooltip,CartesianGrid,Line} from 'recharts'
+
 
 function App() {
+  const [data ,setData] = useState([])
+  useEffect(()=>{
+   const socket = socketIOClient("http://127.0.0.1:4001/")
+    socket.on("message",(data)=>{
+    setData(data)
+    // this.render()
+    })
+  },[])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+     <LineChart
+  width={1500}
+  height={500}
+  data={data}
+  margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+>
+  <XAxis dataKey="Timeslot" />
+  <Tooltip />
+  <CartesianGrid stroke="#f5f5f5" />
+  <Line type="monotone" dataKey="x" stroke="#ff7300" yAxisId={0} />
+  <Line type="monotone" dataKey="y" stroke="#387908" yAxisId={1} />
+</LineChart>
     </div>
   );
 }
